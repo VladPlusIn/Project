@@ -282,8 +282,12 @@ if __name__ == '__main__':
                                      weight_decay=args.weight_decay)
 
         if model_name == 'FNN':
-            FM_pretain_args = torch.load(os.path.join(args.save_param_dir, args.campaign_id, 'FMbest.pth'))
-            model.load_embedding(FM_pretain_args)
+            fm_pth_path = os.path.join(args.save_param_dir, args.campaign_id, 'FMbest.pth')
+            if os.path.exists(fm_pth_path):
+                FM_pretain_args = torch.load(fm_pth_path)
+                model.load_embedding(FM_pretain_args)
+            else:
+                logger.warning(f"Pre-trained file {fm_pth_path} not found, skipping loading pre-trained FM model.")
 
         current_model_test_predicts = main(model, model_name, train_data_loader, val_data_loader, test_data_loader,
                                            optimizer, loss, device, args)
