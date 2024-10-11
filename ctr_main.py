@@ -187,10 +187,10 @@ def main(model, model_name, train_data_loader, val_data_loader, test_data_loader
                                                                  (end_time - start_time).seconds))
 
     # 删除训练过程中记录的多余模型参数
-    for i in range(args.early_stop_iter):
-        os.remove(os.path.join(args.save_param_dir, args.campaign_id, model_name + str(i) + '.pth'))
+    #for i in range(args.early_stop_iter):
+        #os.remove(os.path.join(args.save_param_dir, args.campaign_id, model_name + str(i) + '.pth'))
 
-    return test_predicts
+    #return test_predicts
 
 
 def eva_stopping(valid_aucs, valid_losses, type, args):
@@ -254,10 +254,10 @@ if __name__ == '__main__':
     # click + winning price + hour + time_fraction + timestamp
     # 创建数据产生器
     test_dataset = Data.libsvm_dataset(test_data[:, 5:], test_data[:, 0])
-    test_data_loader = torch.utils.data.DataLoader(test_dataset, batch_size=1024, num_workers=2)
+    test_data_loader = torch.utils.data.DataLoader(test_dataset, batch_size=1024, num_workers=12)
 
     val_dataset = Data.libsvm_dataset(val_data[:, 5:], val_data[:, 0])
-    val_data_loader = torch.utils.data.DataLoader(val_dataset, batch_size=1024, num_workers=2)
+    val_data_loader = torch.utils.data.DataLoader(val_dataset, batch_size=1024, num_workers=12)
 
     loss = nn.BCELoss()
 
@@ -273,7 +273,7 @@ if __name__ == '__main__':
 
     # click + winning price + hour + time_fraction + timestamp
     train_dataset = Data.libsvm_dataset(train_data[:, 5:], train_data[:, 0])
-    train_data_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, num_workers=2)
+    train_data_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, num_workers=12)
 
     for model_name in choose_models:
         model = get_model(model_name, feature_nums, field_nums, args.latent_dims).to(device)
@@ -282,7 +282,7 @@ if __name__ == '__main__':
                                      weight_decay=args.weight_decay)
 
         if model_name == 'FNN':
-            fm_pth_path = os.path.join(args.save_param_dir, args.campaign_id, 'FMbest.pth')
+            fm_pth_path = os.path.join(args.save_param_dir, args.campaign_id, 'FNNbest2.pth')
             if os.path.exists(fm_pth_path):
                 FM_pretain_args = torch.load(fm_pth_path)
                 model.load_embedding(FM_pretain_args)
